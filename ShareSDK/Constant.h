@@ -9,7 +9,10 @@
 #ifndef Constant_h
 #define Constant_h
 
-#define kAppKey         @"583901346"
-#define kRedirectURI    @"http://qiuwanfujoe.github.io"
+#define kSinaWeiboAppKey         @"2547227808"
+#define kRedirectURI    @"http://juzizc.com"
+
+#define kWeixinAppKey @"wx0dc498744b2d7638"
+#define kWeixinAppSecretKey @"c2fbb4b9f4e8b9123e4ddf9ae2f09fbc"
 
 #endif /* Constant_h */

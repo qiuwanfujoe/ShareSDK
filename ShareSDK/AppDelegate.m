@@ -8,9 +8,10 @@
 
 #import "AppDelegate.h"
 #import "WeiboSDK.h"
+#import "weixinSDK/WXApi.h"
 #import "Constant.h"
 
-@interface AppDelegate () <WeiboSDKDelegate>
+@interface AppDelegate () <WeiboSDKDelegate, WXApiDelegate>
 
 @end
 
@@ -20,7 +21,9 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     [WeiboSDK enableDebugMode:YES];
-    [WeiboSDK registerApp:kAppKey];
+    [WeiboSDK registerApp:kSinaWeiboAppKey];
+    
+    [WXApi registerApp:kWeixinAppKey];
     return YES;
 }
 
@@ -48,12 +51,24 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    return [WeiboSDK handleOpenURL:url delegate:self];
+    if ([url.scheme isEqualToString:kWeixinAppKey]) {
+        return [WXApi handleOpenURL:url delegate:self];
+    } else if ([url.scheme isEqualToString:kSinaWeiboAppKey]) {
+        return [WeiboSDK handleOpenURL:url delegate:self];
+    } else {
+        return YES;
+    }
 }
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
 {
-    return [WeiboSDK handleOpenURL:url delegate:self ];
+    if ([url.scheme isEqualToString:kWeixinAppKey]) {
+        return [WXApi handleOpenURL:url delegate:self];
+    } else if ([url.scheme isEqualToString:kSinaWeiboAppKey]) {
+        return [WeiboSDK handleOpenURL:url delegate:self];
+    } else {
+        return YES;
+    }
 }
 
 /**
@@ -78,4 +93,14 @@
 
 }
 
+#pragma mark - 微信
+-(void)onReq:(BaseReq*)req
+{
+
+}
+
+- (void)onResp:(BaseResp *)resp
+{
+
+}
 @end

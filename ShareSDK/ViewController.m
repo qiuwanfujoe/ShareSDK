@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "AppDelegate.h"
 #import "WeiboSDK.h"
+#import "weixinSDK/WXApi.h"
 #import "Constant.h"
 
 
@@ -29,12 +30,11 @@
 }
 - (IBAction)share:(id)sender {
     [self shareButtonPressed];
+//    [self sendLinkContent];
 }
 
 - (void)shareButtonPressed
 {
-    AppDelegate *myDelegate =(AppDelegate*)[[UIApplication sharedApplication] delegate];
-    
     WBAuthorizeRequest *authRequest = [WBAuthorizeRequest request];
     authRequest.redirectURI = kRedirectURI;
     authRequest.scope = @"all";
@@ -52,16 +52,38 @@
 - (WBMessageObject *)messageToShare
 {
     WBMessageObject *message = [WBMessageObject message];
-
+        message.text = @"hehe";
         WBWebpageObject *webpage = [WBWebpageObject object];
         webpage.objectID = @"identifier1";
-        webpage.title = NSLocalizedString(@"分享网页标题", nil);
+        webpage.title = NSLocalizedString(@"gideon's blog", nil);
         webpage.description = [NSString stringWithFormat:NSLocalizedString(@"分享网页内容简介-%.0f", nil), [[NSDate date] timeIntervalSince1970]];
         webpage.thumbnailData = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"image_2" ofType:@"jpg"]];
-        webpage.webpageUrl = @"http://sina.cn?a=1";
+        webpage.webpageUrl = @"http://qiuwanfujoe.github.io";
         message.mediaObject = webpage;
     
     return message;
+}
+
+#pragma mark - 微信
+
+- (void) sendLinkContent
+{
+    WXMediaMessage *message = [WXMediaMessage message];
+    message.title = @"专访张小龙：产品之上的世界观";
+    message.description = @"微信的平台化发展方向是否真的会让这个原本简洁的产品变得臃肿？在国际化发展方向上，微信面临的问题真的是文化差异壁垒吗？腾讯高级副总裁、微信产品负责人张小龙给出了自己的回复。";
+    [message setThumbImage:[UIImage imageNamed:@"res2.png"]];
+    
+    WXWebpageObject *ext = [WXWebpageObject object];
+    ext.webpageUrl = @"http://tech.qq.com/zt2012/tmtdecode/252.htm";
+    
+    message.mediaObject = ext;
+    
+    SendMessageToWXReq* req = [[SendMessageToWXReq alloc] init];
+    req.bText = NO;
+    req.message = message;
+    req.scene = WXSceneTimeline;
+    
+    [WXApi sendReq:req];
 }
 
 
