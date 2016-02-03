@@ -9,9 +9,11 @@
 #import "AppDelegate.h"
 #import "WeiboSDK.h"
 #import "weixinSDK/WXApi.h"
+#import <TencentOpenAPI/TencentOAuth.h>
 #import "Constant.h"
 
-@interface AppDelegate () <WeiboSDKDelegate, WXApiDelegate>
+@interface AppDelegate () <WeiboSDKDelegate, WXApiDelegate, TencentSessionDelegate>
+@property (nonatomic, retain)TencentOAuth *oauth;
 
 @end
 
@@ -24,6 +26,9 @@
     [WeiboSDK registerApp:kSinaWeiboAppKey];
     
     [WXApi registerApp:kWeixinAppKey];
+    
+    _oauth = [[TencentOAuth alloc] initWithAppId:kQQAppId
+                                     andDelegate:self];
     return YES;
 }
 
@@ -55,9 +60,10 @@
         return [WXApi handleOpenURL:url delegate:self];
     } else if ([url.scheme isEqualToString:kSinaWeiboAppKey]) {
         return [WeiboSDK handleOpenURL:url delegate:self];
-    } else {
-        return YES;
+    } else if ([url.scheme isEqualToString:kQQSchema]) {
+        return [TencentOAuth HandleOpenURL:url];
     }
+    return YES;
 }
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
@@ -66,9 +72,10 @@
         return [WXApi handleOpenURL:url delegate:self];
     } else if ([url.scheme isEqualToString:kSinaWeiboAppKey]) {
         return [WeiboSDK handleOpenURL:url delegate:self];
-    } else {
-        return YES;
+    } else if ([url.scheme isEqualToString:kQQSchema]) {
+        return [TencentOAuth HandleOpenURL:url];
     }
+    return YES;
 }
 
 /**
@@ -103,4 +110,31 @@
 {
 
 }
+
+#pragma mark - QQ
+
+/**
+ * 登录成功后的回调
+ */
+- (void)tencentDidLogin
+{
+}
+
+/**
+ * 登录失败后的回调
+ * \param cancelled 代表用户是否主动退出登录
+ */
+- (void)tencentDidNotLogin:(BOOL)cancelled
+{
+    
+}
+
+/**
+ * 登录时网络有问题的回调
+ */
+- (void)tencentDidNotNetWork
+{
+    
+}
+
 @end
